@@ -23,9 +23,9 @@ h = 0.1  # Step size
 n = 100  # Number of steps
 x_values, y_values = euler_method(f, x0, y0, h, n)
 
-# Plotting the results
+
 plt.plot(x_values, y_values, label="Euler's Method", color='blue')
-plt.title("Euler's Method for Solving ODE")
+plt.title("Euler's Method for Solving Ordinary Differential Equation: ")
 plt.xlabel('x')
 plt.ylabel('y')
 plt.legend()
