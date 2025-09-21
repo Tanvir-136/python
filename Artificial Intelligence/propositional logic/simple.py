@@ -102,3 +102,32 @@ r.truth_table(expr)
 
 # # BICONDITIONAL (P ↔ Q)
 # IFF = lambda P, Q: P == Q
+
+
+# or shortcut method
+from itertools import product
+
+
+P_text="tanvir is student"
+Q_text="tanvir is hard working"
+
+# 1st sentence
+w1=P_text.split()
+p1=" ".join(w1[:2])
+p2=" ".join(w1[2:])
+
+# 2nd sentence
+w2 = Q_text.split()
+q1 = " ".join(w2[:2])
+q2 = " ".join(w2[2:])
+
+s = p1 + " " + p2 + " and " + q2
+
+print(s)
+def truth_table(expr):
+    print("P Q | R")
+    for P, Q in product([0,1], repeat=2):
+        print(P, Q, "|", int(expr(P, Q)))
+
+expr = lambda P, Q: (not P) or Q #implies that
+truth_table(expr)
