@@ -1,4 +1,4 @@
-from itertools import product 
+from collections import deque
 
 class Statement:
     def __init__(self, subject, predicate, singular=True):
@@ -10,11 +10,9 @@ class Relation:
     def __init__(self):
         self.map = {}
 
-    # Add a statement
     def add(self, key, subject, predicate, singular=True):
         self.map[key] = Statement(subject, predicate, singular)
 
-    # Print normal statement
     def print_statement(self, key):
         st = self.map[key]
         if st.singular:
@@ -22,7 +20,6 @@ class Relation:
         else:
             print(st.subject, "are", st.predicate, end="")
 
-    # Print negated statement
     def print_neg_statement(self, key):
         st = self.map[key]
         if st.singular:
@@ -30,7 +27,6 @@ class Relation:
         else:
             print(st.subject, "are not", st.predicate, end="")
 
-    # Build natural language from logic formula
     def build_statement(self, logic):
         logic = logic.replace(" ", "").replace(",", "")
         neg = False
@@ -62,43 +58,65 @@ class Relation:
                     self.print_statement(logic[i])
         print('.')
 
-# Truth table function (kept structure similar)
-def truth_table(expr):
-    print("c d | output")
-    for c, d in product([0,1], repeat=2):
-        print(c, d, "|", int(expr(c, d)))
+class RelationLogic(Relation):
+    def __init__(self):
+        super().__init__()
+        self.operand_val = {}
 
-# -----------------------------
+    def map_operands(self, op, val):
+        self.operand_val[op] = val
+
+    # Single operation evaluation
+    def eval_op(self, a, b, op):
+        if op == '!':
+            return 0 if a == 1 else 1
+        elif op == '&':
+            return 1 if a == 1 and b == 1 else 0
+        elif op == '|':
+            return 1 if a == 1 or b == 1 else 0
+        elif op == '~':  # implies
+            return 0 if a == 1 and b == 0 else 1
+        elif op == '*':  # iff
+            return 1 if (a == b) else 0
+
+    # Evaluate full expression (left to right, no precedence)
+    def evaluate_expression(self, exp):
+        exp = exp.replace(" ", "").replace(",", "")
+        operators = deque()
+        operands = deque()
+        negative = False
+
+        for ch in exp:
+            if ch in ['&', '|', '~', '*']:
+                operators.append(ch)
+            elif ch == '!':
+                negative = True
+            else:
+                val = self.operand_val[ch]
+                if negative:
+                    val = self.eval_op(val, 0, '!')
+                    negative = False
+                operands.append(val)
+
+        # Evaluate left to right
+        while operators:
+            op = operators.popleft()
+            a = operands.popleft()
+            b = operands.popleft()
+            result = self.eval_op(a, b, op)
+            operands.appendleft(result)
+
+        return operands.popleft()
+
+# -----------------------
 # Example usage
-# -----------------------------
+# -----------------------
+relation = RelationLogic()
+relation.add("a", "sensei", "student")
+relation.add("b", "sensei", "brilliant")
 
-r = Relation()
-r.add("s", "students", "brilliant", singular=False)
-r.add("a", "Tanvir", "student")
-r.add("b", "Tanvir", "lazy")
-r.add("c", "It", "raining")
-r.add("d", "Road", "wet")
+relation.map_operands("a", 1)
+relation.map_operands("b", 0)
 
-# Natural language from logic
-r.build_statement("c ~ d")   # "It is raining implies Road is dry."
-r.build_statement("a & !b")  # "Tanvir is student and Tanvir is not lazy."
-
-# Truth table example using lambda
-expr = lambda c, d: (not c) or d     
-truth_table(expr)
-
-
-# # AND
-# AND = lambda P, Q: P and Q
-
-# # OR
-# OR = lambda P, Q: P or Q
-
-# # NOT
-# NOT = lambda P: not P
-
-# # IMPLIES (P → Q)
-# IMPLIES = lambda P, Q: (not P) or Q
-
-# # BICONDITIONAL (P ↔ Q)
-# IFF = lambda P, Q: P == Q
+result = relation.evaluate_expression("a | b & !a ~ b")
+print("Result:", result)
