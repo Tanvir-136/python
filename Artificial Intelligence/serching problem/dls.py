@@ -1,20 +1,16 @@
-from collections import deque
-
 tree = {
-    'A':['B', 'C'],
-    'B':['C','D'],
-    'C':['F'],
-    'D':[],
-    'E':[]
+    'A': ['B', 'E'],
+    'B': ['C', 'D'],
+    'C': ['F'],
+    'D': [],
+    'E': [],
+    'F': []
 }
-
-def dfs_limited(tree, start, limit, visited=[]):
-    if limit <= 0:
+def dls(node, depth, limit):
+    if depth > limit:
         return
-    if start not in visited:
-        print(start, end=" ")
-        visited.append(start)
-    for node in tree[start]:
-        dfs_limited(tree, node, limit-1, visited)
+    print(node, end=" ")
+    for next in tree[node]:
+        dls(next, depth + 1, limit)
 
-dfs_limited(tree, 'A', 3)
+dls('A', 0, 1)

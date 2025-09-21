@@ -1,25 +1,22 @@
-from collections import deque
 tree = {
-    'A':['B', 'C'],
-    'B':['C','D'],
-    'C':['F'],
-    'D':[],
-    'E':[]
+    'A': ['B', 'E'],
+    'B': ['C', 'D'],
+    'C': ['F'],
+    'D': [],
+    'E': [],
+    'F': []
 }
 
-def dls(tree, node, limit, visited):
-    if limit < 0:
+def dls(node, depth, limit):
+    if depth > limit:
         return
     print(node, end=" ")
-    visited.add(node)
-    for neighbor in tree.get(node, []):
-        if neighbor not in visited:
-            dls(tree, neighbor, limit - 1, visited)
+    for nxt in tree[node]:
+        dls(nxt, depth+1, limit)
 
-def it_dfs(tree, start, max_limit):
-    for i in range(max_limit):
-        print(f"Iteration {i + 1}: ", end = " ")
-        dls(tree, start, i, set())
-        print()
-        
-it_dfs(tree, 'A', 4)
+def ids(start, max_depth):
+    for limit in range(max_depth+1):
+        print(f"\nDepth limit = {limit}: ", end="")
+        dls(start, 0, limit)
+
+ids('A', 3)

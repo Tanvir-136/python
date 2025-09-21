@@ -22,22 +22,32 @@ graph = {
     "Iasi": [("Vaslui", 92), ("Neamt", 87)],
     "Neamt": [("Iasi", 87)],
 }
+H = {
+    "Arad": 366, "Bucharest": 0, "Craiova": 160, "Drobeta": 242, "Eforie": 161,
+    "Fagaras": 176, "Giurgiu": 77, "Hirsova": 151, "Iasi": 226, "Lugoj": 244,
+    "Mehadia": 241, "Neamt": 234, "Oradea": 380, "Pitesti": 100,
+    "Rimnicu Vilcea": 193, "Sibiu": 253, "Timisoara": 329, "Urziceni": 80,
+    "Vaslui": 199, "Zerind": 374,
+}
 
-def ucs(graph, start, goal):
-    pq = [(0, start, [start])]
+def a_star(graph, H, start, goal):
+    pq = [(H[start], 0, start, [start])]
     vis = set()
     
     while pq:
-        cost, node, path = heapq.heappop(pq)
+        f, g, node , path = heapq.heappop(pq) # f = g + h, g = actual cost
         if node in vis:
             continue
-        
         vis.add(node)
+        
         if node == goal:
-            print(f"Shortest Path: {' -> '.join(path)}")
-            print(f"Total Cost: {cost}")
+            print("Path:", " -> ".join(path))
+            print("Cost:", g)
             return
         for neighbor, w in graph[node]:
-            heapq.heappush(pq, (cost + w, neighbor, path + [neighbor]))
+            if neighbor not in vis:
+                new_g = g + w
+                new_f = new_g + H[neighbor]
+                heapq.heappush(pq, (new_f, new_g, neighbor, path + [neighbor]))        
 
-ucs(graph, "Arad", "Bucharest")
+a_star(graph, H, "Arad", "Bucharest")

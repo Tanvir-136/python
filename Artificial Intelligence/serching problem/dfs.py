@@ -1,6 +1,3 @@
-from collections import deque  
-
-# Define the tree as a dictionary (adjacency list)
 tree = {
     'A': ['B', 'E'],
     'B': ['C', 'D'],
@@ -9,11 +6,12 @@ tree = {
     'E': [],
     'F': []
 }
-def dfs(tree, start, visited = []):
-    if start not in visited:
-        print(start, end= " ")
-        visited.append(start)
-    for node in tree[start]:
-        dfs(tree, node , visited)
-
-dfs(tree, 'A')  # Start BFS from node 'A'
+vis = set()      
+def dfs(node):
+    if node not in vis:
+        print(node, end=" ")
+        vis.add(node)
+        for next in tree[node]:
+            dfs(next)
+    
+dfs('A')

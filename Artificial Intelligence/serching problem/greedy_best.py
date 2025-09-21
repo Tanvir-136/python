@@ -1,5 +1,4 @@
 import heapq
-
 graph = {
     "Arad": [("Zerind", 75), ("Sibiu", 140), ("Timisoara", 118)],
     "Zerind": [("Arad", 75), ("Oradea", 71)],
@@ -22,22 +21,31 @@ graph = {
     "Iasi": [("Vaslui", 92), ("Neamt", 87)],
     "Neamt": [("Iasi", 87)],
 }
+H = {
+    "Arad": 366, "Bucharest": 0, "Craiova": 160, "Drobeta": 242, "Eforie": 161,
+    "Fagaras": 176, "Giurgiu": 77, "Hirsova": 151, "Iasi": 226, "Lugoj": 244,
+    "Mehadia": 241, "Neamt": 234, "Oradea": 380, "Pitesti": 100,
+    "Rimnicu Vilcea": 193, "Sibiu": 253, "Timisoara": 329, "Urziceni": 80,
+    "Vaslui": 199, "Zerind": 374,
+}
 
-def ucs(graph, start, goal):
-    pq = [(0, start, [start])]
-    vis = set()
-    
+def greedy_BFS(graph, H, start, goal):
+    pq = [(H[start], start, [start], 0)]
+    visited = set()
+
     while pq:
-        cost, node, path = heapq.heappop(pq)
-        if node in vis:
+        h, node, path, cost = heapq.heappop(pq)
+        if node in visited:
             continue
-        
-        vis.add(node)
-        if node == goal:
-            print(f"Shortest Path: {' -> '.join(path)}")
-            print(f"Total Cost: {cost}")
-            return
-        for neighbor, w in graph[node]:
-            heapq.heappush(pq, (cost + w, neighbor, path + [neighbor]))
+        visited.add(node)
 
-ucs(graph, "Arad", "Bucharest")
+        if node == goal:
+            print("Path:", " -> ".join(path))
+            print("Cost:", cost)
+            return
+
+        for neighbor, w in graph[node]:
+            if neighbor not in visited:
+                heapq.heappush(pq, (H[neighbor], neighbor, path + [neighbor], cost + w))
+
+greedy_BFS(graph, H, "Arad", "Bucharest")
