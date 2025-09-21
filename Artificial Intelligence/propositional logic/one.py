@@ -1,4 +1,4 @@
-import itertools
+from itertools import product 
 
 class Statement:
     def __init__(self, subject, predicate, singular=True):
@@ -62,40 +62,11 @@ class Relation:
                     self.print_statement(logic[i])
         print('.')
 
-    # Draw truth table
-    def draw_table(self, li, *args):
-        header = " | ".join(args)
-        length = len(header)
-        print("-" * length)
-        print(header)
-        print("-" * length)
-        for row in li:
-            print(" | ".join(str(i) for i in row))
-        print("-" * length)
-
-    # Generate truth table for expression
-    def truth_table(self, expr, vars):
-        print(f"Truth Table for: {expr}")
-        header = vars + [expr]
-        rows = []
-        for values in itertools.product([0,1], repeat=len(vars)):
-            env = dict(zip(vars, values))
-            result = eval(expr, {}, env)
-            rows.append([*values, int(result)])
-        self.draw_table(rows, *header)
-
-    # Check tautology/contradiction/satisfiability
-    def check_formula(self, expr, vars):
-        results = []
-        for values in itertools.product([0,1], repeat=len(vars)):
-            env = dict(zip(vars, values))
-            results.append(eval(expr, {}, env))
-        if all(results):
-            print("Formula is a Tautology ✅")
-        elif not any(results):
-            print("Formula is a Contradiction ❌")
-        else:
-            print("Formula is Satisfiable ☑️")
+# Truth table function (kept structure similar)
+def truth_table(expr):
+    print("c d | output")
+    for c, d in product([0,1], repeat=2):
+        print(c, d, "|", int(expr(c, d)))
 
 # -----------------------------
 # Example usage
@@ -106,15 +77,28 @@ r.add("s", "students", "brilliant", singular=False)
 r.add("a", "Tanvir", "student")
 r.add("b", "Tanvir", "lazy")
 r.add("c", "It", "raining")
-r.add("d", "Road", "dry")
+r.add("d", "Road", "wet")
 
 # Natural language from logic
 r.build_statement("c ~ d")   # "It is raining implies Road is dry."
 r.build_statement("a & !b")  # "Tanvir is student and Tanvir is not lazy."
 
-# Truth table example
-r.truth_table("p and (not q)", ["p","q"])
+# Truth table example using lambda
+expr = lambda c, d: (not c) or d     
+truth_table(expr)
 
-# Formula check
-r.check_formula("p or (not p)", ["p"])   # Tautology
-r.check_formula("p and (not p)", ["p"])  # Contradiction
+
+# # AND
+# AND = lambda P, Q: P and Q
+
+# # OR
+# OR = lambda P, Q: P or Q
+
+# # NOT
+# NOT = lambda P: not P
+
+# # IMPLIES (P → Q)
+# IMPLIES = lambda P, Q: (not P) or Q
+
+# # BICONDITIONAL (P ↔ Q)
+# IFF = lambda P, Q: P == Q
