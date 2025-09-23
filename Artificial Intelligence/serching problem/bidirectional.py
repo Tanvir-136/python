@@ -13,27 +13,27 @@ def bidirectional(tree, start, goal):
     if start == goal:
         return None, None
     
-    start_visited = []
-    start_queue = deque([start])
-    goal_visited = []
-    goal_queue = deque([goal])
+    st_vis = []
+    st_q = deque([start])
+    goal_vis = []
+    goal_q = deque([goal])
     
-    while start_queue and goal_queue:
-        start_node = start_queue.popleft()
-        if start_node not in start_visited:
-            start_visited.append(start_node)
-            for neighbor in tree[start_node]:
-                if neighbor not in start_visited:
-                    start_queue.append(neighbor)
+    while st_q and goal_q:
+        st_node = st_q.popleft()
+        if st_node not in st_vis:
+            st_vis.append(st_node)
+            for neighbor in tree[st_node]:
+                if neighbor not in st_vis:
+                    st_q.append(neighbor)
                     
         # from 
-        goal_node = goal_queue.popleft()
-        if goal_node not in goal_visited:
-            goal_visited.append(goal_node)
+        goal_node = goal_q.popleft()
+        if goal_node not in goal_vis:
+            goal_vis.append(goal_node)
             for neighbor in tree[goal_node]:
-                goal_queue.append(neighbor)
+                goal_q.append(neighbor)
                 
-        if start_node in goal_visited or goal_node in start_visited:
-            return start_visited,goal_visited
+        if st_node in goal_vis or goal_node in st_vis:
+            return st_vis,goal_vis
         
 print(bidirectional(tree,'A', 'D'))

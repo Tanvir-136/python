@@ -13,4 +13,4 @@ def dls(node, depth, limit):
     for next in tree[node]:
         dls(next, depth + 1, limit)
 
-dls('A', 0, 1)
+dls('A', 0, 3)
