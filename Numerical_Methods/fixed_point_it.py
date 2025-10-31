@@ -1,5 +1,5 @@
 # Newton’s Law of Cooling (steady state)
-# T=25+0.85×T×e−0.05T
+# T=25+0.85×T×e^−0.05T
 
 import numpy as np
 import matplotlib.pyplot as plt
